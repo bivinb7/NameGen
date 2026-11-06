@@ -90,35 +90,46 @@ c3.metric("Device", str(device).upper())
 left,right = st.columns([1.3,0.7], gap="large")
 with left:
     st.subheader("Generate names")
-            if st.button("✨ Generate names", type="primary", use_container_width=True):
-            with st.spinner("Generating Indian place names..."):
-                names = generate_batch(
-                    active_model,
-                    model_choice,
-                    count,
-                    temperature,
-                    max_chars
-                )
 
-            st.session_state.latest = names
-            st.session_state.setdefault("history", [])
-            st.session_state.history.insert(
-                0,
-                {
-                    "model": model_choice,
-                    "temperature": temperature,
-                    "names": names
-                }
+    if st.button("✨ Generate names", type="primary", use_container_width=True):
+        with st.spinner("Generating Indian place names..."):
+            names = generate_batch(
+                active_model,
+                model_choice,
+                count,
+                temperature,
+                max_chars
             )
 
-            if not names:
-                st.warning("No valid names generated. Try increasing temperature.")
+        st.session_state.latest = names
+        st.session_state.setdefault("history", [])
+        st.session_state.history.insert(
+            0,
+            {
+                "model": model_choice,
+                "temperature": temperature,
+                "names": names
+            }
+        )
+
+        if not names:
+            st.warning("No valid names generated. Try increasing temperature.")
+
     if "latest" in st.session_state:
         st.markdown("#### Generated results")
-        for i,name in enumerate(st.session_state.latest,1):
-            st.markdown(f'<div class="name-card"><b>{i:02d}.</b> {name}</div>', unsafe_allow_html=True)
+        for i, name in enumerate(st.session_state.latest, 1):
+            st.markdown(
+                f'<div class="name-card"><b>{i:02d}.</b> {name}</div>',
+                unsafe_allow_html=True
+            )
+
         if st.session_state.latest:
-            st.download_button("Download names CSV", pd.DataFrame({"place_name":st.session_state.latest}).to_csv(index=False), "namegen_results.csv", "text/csv")
+            st.download_button(
+                "Download names CSV",
+                pd.DataFrame({"place_name": st.session_state.latest}).to_csv(index=False),
+                "namegen_results.csv",
+                "text/csv"
+            )
 with right:
     st.subheader("About NameGen")
     st.write("A character-level model predicts one character at a time. The Transformer uses sinusoidal positional encoding and masked self-attention.")
