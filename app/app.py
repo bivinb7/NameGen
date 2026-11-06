@@ -54,7 +54,7 @@ def generate_one(model, kind, temperature=0.8, max_chars=24):
 
 def generate_batch(model, kind, count, temperature, max_chars):
     accepted, attempts = [], 0
-    while len(accepted) < count and attempts < count * 20:
+    while len(accepted) < count and attempts < count * 3:
         attempts += 1
         name = generate_one(model, kind, temperature, max_chars)
         if is_valid_name(name) and name.lower() not in {x.lower() for x in accepted}:
@@ -76,9 +76,9 @@ st.write("Generate Indian-style place names using character-level deep learning 
 with st.sidebar:
     st.header("Generation settings")
     model_choice = st.selectbox("Choose model", ["Mini Transformer", "LSTM"])
-    count = st.slider("Number of names", 1, 20, 10)
+    count = st.slider("Number of names", 1, 10, 5)
     temperature = st.slider("Temperature", 0.2, 1.5, 0.8, 0.1)
-    max_chars = st.slider("Maximum generated characters", 5, 30, 20)
+    max_chars = st.slider("Maximum generated characters", 5, 20, 12)
     st.caption("Lower temperature produces more predictable outputs; higher temperature increases randomness.")
 
 active_model = transformer if model_choice == "Mini Transformer" else lstm
